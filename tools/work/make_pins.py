@@ -15,7 +15,10 @@ CSS = """
 @import url('base.css');
 body{background:var(--bg)}
 .frame{width:1000px;height:1500px;background:var(--bg);color:var(--fg);padding:84px 80px 78px;display:flex;flex-direction:column}
-.top{font-size:26px;color:var(--acc)}
+.top{font-size:26px;color:var(--fg)}
+.card .clabel{font-size:24px;color:var(--bg);margin-bottom:22px}
+.card.hook .display{font-size:66px}
+h1.big{font-size:122px}
 h1{margin:34px 0 0;font-size:100px}
 .card{margin-top:44px;padding:54px 52px;transform:rotate(-1.2deg)}
 .card .display{font-size:58px;line-height:1.1}
@@ -50,6 +53,13 @@ def cover_pin(key, headline):
 <div class="foot"><div class="by">by {AUTHOR}</div><div class="tag">Get curious. Scroll less.</div></div></div>"""
     return page(b, body)
 
+def hook_pin(key, headline, label, q, lead):
+    b = BOOKS[key]
+    body = f"""<div class="frame"><div class="top label">Lowe Books</div><div class="spacer"></div><h1 class="display big">{headline}</h1>
+<div class="card hook" style="margin-top:56px"><div class="clabel label">{label}</div><div class="display">{html.escape(q)}</div></div><div class="spacer"></div>
+{foot(b, lead)}</div>"""
+    return page(b, body)
+
 def mc_pin(key, headline, q, opts):
     b = BOOKS[key]
     o = ''.join(f'<div class="opt"><b>{l}</b><span>{html.escape(t)}</span></div>' for l, t in zip('ABCD', opts))
@@ -67,14 +77,14 @@ def list_pin(key, headline, items, lead):
     return page(b, body)
 
 PINS = {
- 'random_cover': cover_pin('random', 'Facts you never knew you needed.'),
+ 'random_google': hook_pin('random', 'Ask this at your next game night.', 'Then watch them guess', 'What was the original name of Google?', 'One of 300 questions in'),
  'random_wombat': mc_pin('random', 'Can you guess it?', 'What unusual feature do wombat droppings have?',
      ['They are cube-shaped', 'They glow in the dark', 'They are odorless', 'They can bounce']),
  'random_ebay': mc_pin('random', 'Weird, but true.', 'What was the first-ever item sold on eBay?',
      ['A broken laser pointer', 'A vintage comic book', 'A pair of used sneakers', 'A pack of baseball cards']),
  'random_twinkie': mc_pin('random', 'No googling.', 'What was the original filling flavor of the Twinkie?',
      ['Vanilla', 'Banana', 'Chocolate', 'Lemon']),
- 'memory_cover': cover_pin('memory', 'Remember when? Trivia for those who do.'),
+ 'memory_bonanza': hook_pin('memory', 'Ask Grandpa this at Thanksgiving.', 'Then watch him light up', 'On "Bonanza," what was the name of the Cartwright family\'s ranch?', 'One of 500 questions in'),
  'memory_tv': list_pin('memory', '5 classic TV questions.', [
      'What town does "The Andy Griffith Show" take place in?',
      'Who played the lead in "Perry Mason"?',
