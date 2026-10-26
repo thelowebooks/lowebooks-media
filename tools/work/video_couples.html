@@ -1,0 +1,50 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><link rel="stylesheet" href="base.css">
+<style>
+body{background:var(--coral)}
+.frame{width:1080px;height:1920px;background:var(--coral)}
+#hook{justify-content:center;padding:0 90px;gap:40px}
+#hook h1{font-size:160px;margin:0}
+#hook p{font-size:64px;font-weight:600;margin:0;color:var(--cream)}
+#q{justify-content:center;align-items:center;padding:0 80px;gap:70px}
+#q .card{width:920px;padding:80px 70px;display:flex;flex-direction:column;gap:30px}
+#q .card .label{font-size:30px;color:var(--red)}
+#q .card .display{font-size:96px;line-height:1.06}
+#q .then{font-size:88px;margin:0;text-align:center}
+#end{justify-content:center;padding:0 90px;gap:28px}
+#end h1{font-size:150px;margin:0}
+#end .sub{font-size:60px;font-weight:600;margin:0 0 70px;color:var(--cream)}
+#end .book{font-size:40px;font-weight:500}
+#end .title{font-size:76px}
+#end .tag{font-size:44px;font-weight:700;margin-top:60px;color:var(--cream)}
+</style></head>
+<body><div class="frame">
+<div class="brand label">Lowe Books</div>
+<section id="hook" class="scene"><h1 class="display">Ask your partner this tonight.</h1><p>No context. Just ask.</p></section>
+<section id="q" class="scene">
+  <div class="card"><div class="label">Ask your partner</div><div class="display">What first attracted you to me, and has that changed over time?</div></div>
+  <p class="then display" id="then">Then watch their face.</p>
+</section>
+<section id="end" class="scene">
+  <h1 class="display">What did they say?</h1>
+  <p class="sub">Tell us in the comments.</p>
+  <div class="book">From</div>
+  <div class="title display">300 Questions Couples Should Ask</div>
+  <div class="book">by Rann Lowe · on Amazon</div>
+  <div class="tag">Get curious. Scroll less.</div>
+</section>
+</div>
+<script src="anim.js"></script>
+<script>
+const HOOK = 2.4, THEN = 5.2, END = 9.0;
+window.DURATION = 12.5;
+window.EVENTS = [['pop', HOOK], ['pop', THEN], ['ding', END]];
+function render(t) {
+  show(document.getElementById('hook'), t, 0, HOOK);
+  show(document.getElementById('q'), t, HOOK, END, {scaleFrom: 0.92, rise: 0});
+  const th = document.getElementById('then');
+  th.style.opacity = t < THEN ? 0 : ease((t - THEN) / 0.3);
+  th.style.transform = `translateY(${(1 - ease((t - THEN) / 0.3)) * 30}px)`;
+  show(document.getElementById('end'), t, END, DURATION + 1, {noOut: true});
+}
+</script></body></html>

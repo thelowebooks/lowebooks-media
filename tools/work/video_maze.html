@@ -1,0 +1,66 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><link rel="stylesheet" href="base.css">
+<style>
+body{background:var(--ink)}
+.frame{width:1080px;height:1920px;background:var(--ink);color:var(--cream)}
+.brand{color:var(--yellow)}
+#hook{justify-content:center;padding:0 90px;gap:40px}
+#hook h1{font-size:156px;margin:0}
+#hook p{font-size:60px;font-weight:600;margin:0;color:var(--yellow)}
+#play{align-items:center;padding-top:250px;gap:40px}
+.head{height:200px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:22px;width:920px}
+.secs{font-size:150px;color:var(--yellow);line-height:1}
+.bar{width:920px;height:18px;border-radius:9px;background:rgba(255,245,220,.18);overflow:hidden}
+.bar div{height:100%;background:var(--yellow);border-radius:9px}
+.up{font-size:130px;color:var(--coral);line-height:1;display:none}
+.mazecard{width:940px;height:940px;background:var(--cream);border-radius:56px;position:relative}
+.mazecard img{position:absolute;left:50px;top:50px;width:840px;height:840px}
+.tip{font-size:44px;font-weight:600;color:var(--cream);opacity:.8}
+#end{justify-content:center;padding:0 90px;gap:28px}
+#end h1{font-size:140px;margin:0}
+#end .sub{font-size:60px;font-weight:600;margin:0 0 70px;color:var(--yellow)}
+#end .book{font-size:40px;font-weight:500}
+#end .title{font-size:76px}
+#end .tag{font-size:44px;font-weight:700;margin-top:60px;color:var(--yellow)}
+</style></head>
+<body><div class="frame">
+<div class="brand label">Lowe Books</div>
+<section id="hook" class="scene"><h1 class="display">Beat this maze in 15&nbsp;seconds.</h1><p>Start at the top. Exit at the bottom.</p></section>
+<section id="play" class="scene">
+  <div class="head"><div class="secs display" id="secs">15</div><div class="bar"><div id="bar"></div></div><div class="up display" id="up">Time's up.</div></div>
+  <div class="mazecard"><img src="../maze/assets/maze_ink.png"><img id="path" src="../maze/assets/path_000.png" style="opacity:0"></div>
+  <div class="tip" id="tip">Pause it if you need more time.</div>
+</section>
+<section id="end" class="scene">
+  <h1 class="display">100 large-print mazes.</h1>
+  <p class="sub">Solutions included.</p>
+  <div class="title display">Easy Maze Puzzle Book for Seniors</div>
+  <div class="book">by Rann Lowe · on Amazon</div>
+  <div class="tag">Get curious. Scroll less.</div>
+</section>
+</div>
+<script src="anim.js"></script>
+<script>
+const HOOK = 2.4, SECS = 15, UP = HOOK + SECS, DRAW = 2.0, END = UP + 4.2;
+window.DURATION = END + 3.8;
+window.EVENTS = [['pop', HOOK]];
+for (let s = 1; s < SECS; s++) EVENTS.push([s >= SECS - 3 ? 'tickhi' : 'tick', HOOK + s]);
+EVENTS.push(['ding', UP]); EVENTS.push(['ding', END]);
+const pre = []; for (let i = 0; i <= 60; i++) { const im = new Image(); pre.push(new Promise(r => { im.onload = r; im.onerror = () => r('err'); })); im.src = `../maze/assets/path_${String(i).padStart(3, '0')}.png`; }
+window.__ready = Promise.all([document.fonts.ready, ...pre]).then(() => true);
+function render(t) {
+  show(document.getElementById('hook'), t, 0, HOOK);
+  show(document.getElementById('play'), t, HOOK, END, {rise: 0});
+  const left = clamp(SECS - (t - HOOK), 0, SECS);
+  const playing = t < UP;
+  document.getElementById('secs').style.display = playing ? 'block' : 'none';
+  document.querySelector('.bar').style.display = playing ? 'block' : 'none';
+  document.getElementById('up').style.display = playing ? 'none' : 'block';
+  document.getElementById('tip').style.visibility = playing ? 'visible' : 'hidden';
+  document.getElementById('secs').textContent = Math.ceil(left) || 0;
+  document.getElementById('bar').style.width = (left / SECS * 100) + '%';
+  const p = document.getElementById('path');
+  if (t >= UP + 0.4) { const i = Math.round(clamp((t - UP - 0.4) / DRAW, 0, 1) * 60); p.src = `../maze/assets/path_${String(i).padStart(3, '0')}.png`; p.style.opacity = 1; } else p.style.opacity = 0;
+  show(document.getElementById('end'), t, END, DURATION + 1, {noOut: true});
+}
+</script></body></html>

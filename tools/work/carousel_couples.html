@@ -1,0 +1,35 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><link rel="stylesheet" href="base.css">
+<style>
+.frame{width:1080px;height:1350px}
+.slide{position:absolute;inset:0;display:none;flex-direction:column;justify-content:space-between;padding:96px 90px}
+.top{font-size:26px;display:flex;justify-content:space-between}
+#s0{background:var(--coral)}
+#s0 h1{font-size:150px;margin:0 0 40px}
+#s0 p{font-size:52px;font-weight:600;margin:0;color:var(--cream)}
+.qs{background:var(--cream)}
+.qs .n{font-size:300px;color:var(--coral);line-height:.8}
+.qs .q{font-size:96px;line-height:1.06}
+.qs .hint{font-size:36px;font-weight:600;color:var(--red)}
+#s4{background:var(--ink);color:var(--cream)}
+#s4 h1{font-size:128px;margin:0 0 50px}
+#s4 .from{font-size:36px;font-weight:500}
+#s4 .title{font-size:64px;margin:8px 0}
+#s4 .tag{font-size:36px;font-weight:700;color:var(--yellow)}
+.arrow{font-size:40px;font-weight:700}
+</style></head>
+<body><div class="frame">
+<section class="slide" id="s0"><div class="top label"><span>Lowe Books</span><span>1 / 5</span></div>
+  <div><h1 class="display">3 questions to ask your partner tonight.</h1><p>Swipe. Don't skip the third one.</p></div><div class="arrow">Swipe →</div></section>
+<section class="slide qs" id="s1"><div class="top label"><span>Lowe Books</span><span>2 / 5</span></div><div class="n display">1</div>
+  <div class="q display">What's your most cherished memory of us together?</div><div class="hint">Ask it. Don't answer for them.</div></section>
+<section class="slide qs" id="s2"><div class="top label"><span>Lowe Books</span><span>3 / 5</span></div><div class="n display">2</div>
+  <div class="q display">What's a small act of affection that you always appreciate?</div><div class="hint">Take notes. Seriously.</div></section>
+<section class="slide qs" id="s3"><div class="top label"><span>Lowe Books</span><span>4 / 5</span></div><div class="n display">3</div>
+  <div class="q display">Where do you see us as a couple in five years?</div><div class="hint">Told you not to skip it.</div></section>
+<section class="slide" id="s4"><div class="top label"><span>Lowe Books</span><span>5 / 5</span></div>
+  <div><h1 class="display">Which one are you asking first?</h1><div class="from">297 more in</div><div class="title display">300 Questions Couples Should Ask</div><div class="from">by Rann Lowe · link in bio</div></div>
+  <div class="tag">Get curious. Scroll less.</div></section>
+</div>
+<script src="anim.js"></script>
+<script>function render(n){document.querySelectorAll('.slide').forEach((s,i)=>s.style.display=i===n?'flex':'none');}</script></body></html>

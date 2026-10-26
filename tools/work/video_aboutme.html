@@ -1,0 +1,69 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><link rel="stylesheet" href="base.css">
+<style>
+body{background:var(--yellow)}
+.frame{width:1080px;height:1920px;background:var(--yellow)}
+#hook{justify-content:center;padding:0 90px;gap:36px}
+#hook h1{font-size:168px;margin:0}
+#hook p{font-size:96px;margin:0;color:var(--red)}
+#q{align-items:center;justify-content:center;padding:0 80px;gap:56px}
+#q .count{font-size:40px}
+#q .card{width:920px;min-height:620px;padding:72px 70px;display:flex;align-items:center}
+#q .card div{font-size:84px;line-height:1.08}
+.timer{position:relative;width:260px;height:260px}
+.timer svg{position:absolute;inset:0}
+.timer .num{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:128px}
+#end{justify-content:center;padding:0 90px;gap:28px}
+#end h1{font-size:136px;margin:0}
+#end .sub{font-size:56px;font-weight:500;margin:0 0 60px}
+#end .book{font-size:40px;font-weight:500}
+#end .title{font-size:78px}
+#end .tag{font-size:44px;font-weight:700;margin-top:60px}
+</style></head>
+<body><div class="frame">
+<div class="brand label">Lowe Books</div>
+<section id="hook" class="scene"><h1 class="display">Answer in 5&nbsp;seconds.</h1><p class="display">Don't overthink it.</p></section>
+<section id="q" class="scene">
+  <div class="count label" id="count">1 / 3</div>
+  <div class="card"><div class="display" id="qtext"></div></div>
+  <div class="timer"><svg viewBox="0 0 260 260"><circle cx="130" cy="130" r="112" fill="none" stroke="rgba(30,26,22,.15)" stroke-width="18"/><circle id="ring" cx="130" cy="130" r="112" fill="none" stroke="#1E1A16" stroke-width="18" stroke-linecap="round" stroke-dasharray="703.7" transform="rotate(-90 130 130)"/></svg><div class="num display" id="num">5</div></div>
+</section>
+<section id="end" class="scene">
+  <h1 class="display">Which one got you?</h1>
+  <p class="sub">Drop your answers in the comments.</p>
+  <div class="book">300 more questions like these in</div>
+  <div class="title display">300 Questions About Me</div>
+  <div class="book">by Rann Lowe · on Amazon</div>
+  <div class="tag">Get curious. Scroll less.</div>
+</section>
+</div>
+<script src="anim.js"></script>
+<script>
+const QS = [
+  "What would your theme song be every time you entered a room?",
+  "Which wild animal would you want as a pet?",
+  "What would be the title of your autobiography if it had to be humorous?"
+];
+const HOOK = 2.5, PER = 5, END = HOOK + QS.length * PER;
+window.DURATION = END + 3.5;
+window.EVENTS = [];
+QS.forEach((_, i) => { const s = HOOK + i * PER; EVENTS.push(['pop', s]); for (let k = 1; k < PER; k++) EVENTS.push([k >= PER - 2 ? 'tickhi' : 'tick', s + k]); });
+EVENTS.push(['ding', END]);
+function render(t) {
+  show(document.getElementById('hook'), t, 0, HOOK);
+  const q = document.getElementById('q');
+  if (t >= HOOK && t < END) {
+    const i = Math.floor((t - HOOK) / PER), lt = t - HOOK - i * PER;
+    q.style.opacity = Math.min(1, (t - HOOK) / 0.25, (END - t) / 0.2);
+    document.getElementById('count').textContent = `${i + 1} / ${QS.length}`;
+    const qt = document.getElementById('qtext');
+    qt.textContent = QS[i];
+    const p = ease(lt / 0.25);
+    qt.parentElement.style.transform = `scale(${0.94 + 0.06 * p})`;
+    qt.style.opacity = p;
+    document.getElementById('num').textContent = Math.max(1, PER - Math.floor(lt));
+    document.getElementById('ring').style.strokeDashoffset = 703.7 * clamp(lt / PER, 0, 1);
+  } else q.style.opacity = 0;
+  show(document.getElementById('end'), t, END, DURATION + 1, {noOut: true});
+}
+</script></body></html>

@@ -1,0 +1,12 @@
+@font-face{font-family:'Bricolage';src:url('node_modules/@fontsource-variable/bricolage-grotesque/files/bricolage-grotesque-latin-wght-normal.woff2') format('woff2');font-weight:200 800}
+@font-face{font-family:'DM Sans';src:url('node_modules/@fontsource-variable/dm-sans/files/dm-sans-latin-wght-normal.woff2') format('woff2');font-weight:100 1000}
+:root{--yellow:#F5C842;--coral:#E8553A;--teal:#1F6F6A;--ink:#1E1A16;--cream:#FFF5DC;--red:#B23A1F}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{font-family:'DM Sans',sans-serif;color:var(--ink);overflow:hidden}
+.frame{position:relative;overflow:hidden}
+.display{font-family:'Bricolage',sans-serif;font-weight:800;letter-spacing:-0.02em;line-height:1.02}
+.label{font-family:'DM Sans',sans-serif;font-weight:700;letter-spacing:0.18em;text-transform:uppercase}
+.scene{position:absolute;inset:0;display:flex;flex-direction:column;opacity:0}
+.brand{position:absolute;left:80px;top:130px;font-size:30px}
+.card{background:var(--cream);color:var(--ink);border-radius:48px}
