@@ -55,6 +55,7 @@ body{background:var(--bg)}
   <p class="sub">Tell us in the comments.</p>
   <div class="book" id="endBook"></div>
   <div class="title display" id="endTitle"></div>
+  <div class="book" id="endAuthor"></div>
   <div class="tag">Get curious. Scroll less.</div>
 </section>
 </div>
@@ -70,6 +71,7 @@ document.getElementById('h1').textContent = CFG.hook;
 document.getElementById('h2').textContent = CFG.hookSub;
 document.getElementById('endBook').textContent = CFG.endBook;
 document.getElementById('endTitle').textContent = CFG.endTitle;
+document.getElementById('endAuthor').textContent = CFG.endAuthor || 'by Rann Lowe';
 const L = 'ABCD';
 function render(t) {
   show(document.getElementById('hook'), t, 0, HOOK);
