@@ -8,7 +8,7 @@ cfg = json.load(open(sys.argv[1]))
 TEMPLATE = r'''<!doctype html>
 <html><head><meta charset="utf-8"><link rel="stylesheet" href="base.css">
 <style>
-:root{--bg:__BG__;--fg:__FG__;--acc:__ACC__}
+:root{--bg:__BG__;--fg:__FG__;--acc:__ACC__;--onacc:__ONACC__}
 body{background:var(--bg)}
 .frame{width:1080px;height:1920px;background:var(--bg);color:var(--fg)}
 .brand{color:var(--acc)}
@@ -21,9 +21,9 @@ body{background:var(--bg)}
 #q .card .display{font-size:__QSIZE__px;line-height:1.08}
 .opts{display:flex;flex-direction:column;gap:22px;width:920px}
 .opt{display:flex;align-items:center;gap:28px;background:var(--fg);color:var(--bg);border-radius:30px;padding:26px 34px;font-size:50px;font-weight:700;min-height:112px}
-.opt b{flex:0 0 72px;height:72px;border-radius:50%;background:var(--acc);color:#1E1A16;display:flex;align-items:center;justify-content:center;font-family:'Bricolage',sans-serif;font-weight:800;font-size:44px}
-.opt.good{background:var(--acc);color:#1E1A16;transform:scale(1.04)}
-.opt.good b{background:#1E1A16;color:var(--acc)}
+.opt b{flex:0 0 72px;height:72px;border-radius:50%;background:var(--acc);color:var(--onacc);display:flex;align-items:center;justify-content:center;font-family:'Bricolage',sans-serif;font-weight:800;font-size:44px}
+.opt.good{background:var(--acc);color:var(--onacc);transform:scale(1.04)}
+.opt.good b{background:var(--onacc);color:var(--acc)}
 .opt.dim{opacity:.28}
 .foot{height:260px;display:flex;align-items:center;justify-content:center;width:920px}
 .timer{position:relative;width:240px;height:240px}
@@ -101,6 +101,6 @@ function render(t) {
 </script></body></html>'''
 out = (TEMPLATE.replace('__CFG__', json.dumps(cfg, ensure_ascii=False))
        .replace('__BG__', cfg['bg']).replace('__FG__', cfg.get('fg', '#FFF5DC')).replace('__ACC__', cfg['accent'])
-       .replace('__QSIZE__', str(cfg.get('qsize', 58))))
+       .replace('__QSIZE__', str(cfg.get('qsize', 58))).replace('__ONACC__', cfg.get('onacc', '#1E1A16')))
 open(sys.argv[2], 'w', encoding='utf-8').write(out)
 print('wrote', sys.argv[2])
