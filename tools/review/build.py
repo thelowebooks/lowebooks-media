@@ -17,6 +17,9 @@ def card(p):
     target = p.get('board') or p.get('link_note', '')
     cap = (('Title: ' + p['title'] + '\n\n') if plat == 'Pinterest' else '') + p['caption']
     tag = (p['attribution_campaign'] + ' / ' + plat + (' (pin link)' if plat == 'Pinterest' else ' (bio link)')) if p.get('attribution_tag_url') else p.get('link_note', '')
+    slides = ''
+    if len(p['media_urls']) > 1:
+        slides = '<div class="slides">' + ''.join(f'<a href="{u}" target="_blank" rel="noopener" aria-label="Open slide {k} of post {i}"><img src="thumbs/{p["thumb"][:-4]}_{k-1}.jpg" alt="Slide {k}" width="150" loading="lazy"></a>' for k, u in enumerate(p['media_urls'], 1)) + '</div>'
     return f'''<article class="post">
   <a class="thumb" href="{p['media_urls'][0]}" target="_blank" rel="noopener" aria-label="Open the media for post {i}"><img src="thumbs/{p['thumb']}" alt="" width="300" loading="lazy"></a>
   <div class="body">
@@ -27,6 +30,7 @@ def card(p):
       <span class="when"><b>{p['time_et']} ET</b> <span class="bucharest">{p['time_bucharest']} Bucharest</span></span>
     </div>
     <p class="cap" id="cap{i}">{e(cap)}</p>
+    {slides}
     <button class="more" type="button" aria-controls="cap{i}" aria-expanded="false">Show full caption</button>
     <dl class="facts">
       <div><dt>Book</dt><dd>{e(p['book'])}</dd></div>
@@ -96,6 +100,8 @@ h2::after {{ content: ""; flex: 1; height: 1px; background: var(--line); }}
 .fmt {{ color: var(--muted); }}
 .when {{ margin-left: auto; font-variant-numeric: tabular-nums; text-align: right; }}
 .when .bucharest {{ color: var(--muted); font-size: 12px; margin-left: 6px; }}
+.slides {{ display: flex; gap: 6px; overflow-x: auto; }}
+.slides img {{ display: block; width: 84px; height: auto; border-radius: 6px; border: 1px solid var(--line); }}
 .cap {{ margin: 0; white-space: pre-line; overflow-wrap: anywhere; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }}
 .cap.open {{ display: block; }}
 .more {{ justify-self: start; font: 500 13px var(--body); color: var(--accent); background: none; border: 0; padding: 2px 0; cursor: pointer; text-decoration: underline; text-underline-offset: 3px; }}
