@@ -1,68 +1,35 @@
 import html, json, sys
-
-BASE = "https://thelowebooks.github.io/lowebooks-media/2026-w44/"
-WEEK = "Week of Oct 26"
-
-# (day label ET, time ET, time Bucharest, platform, format, board/target, thumb, media file, caption, book, tag)
-P = [
- ("Tue Oct 27", "8:00 PM", "Wed 02:00", "TikTok", "Video 12s", "Personal account", "couples.jpg", "video-couples.mp4",
-  "Ask your partner this tonight 👀 What first attracted you to me, and has that changed over time? #couplesquestions #datenight #relationshipquestions #booktok #deepconversations",
-  "Couples", "Link in bio (TikTok link later)"),
- ("Tue Oct 27", "8:00 PM", "Wed 02:00", "Instagram", "Reel 12s", "Shares to Facebook", "couples.jpg", "video-couples.mp4",
-  "Ask your partner this tonight 👀\n\n\"What first attracted you to me, and has that changed over time?\"\n\n297 more in 300 Questions Couples Should Ask by Rann Lowe. Link in bio.\n\nGet curious. Scroll less.\n\n#couplesquestions #datenightideas #relationshipquestions #deepconversations #questionsforcouples #dateathome",
-  "Couples", "Link in bio, tag LB-Couples / Instagram"),
- ("Tue Oct 27", "9:00 PM", "Wed 03:00", "Pinterest", "Pin 1000×1500", "Questions to Ask Your Parents", "pin-parents.jpg", "pin-parents.png",
-  "Questions to ask your parents before the holidays are over. One question, a good listen, and a conversation you'll remember. This is 1 of 300 conversation starters in 300 Questions to Ask Your Parents, a great gift idea for Christmas, Mother's Day or birthdays. Get it on Amazon.",
-  "Parents", "Amazon link, tag LB-Parents / Pinterest"),
- ("Wed Oct 28", "8:00 PM", "Thu 02:00", "Instagram", "Carousel 5 slides", "Shares to Facebook", "carousel.jpg", "carousel_couples_0.png",
-  "3 questions to ask your partner tonight. Swipe, and don't skip the third one. 💬\n\nWhich one are you asking first? Tell us below 👇\n\n297 more in 300 Questions Couples Should Ask by Rann Lowe. Link in bio.\n\nGet curious. Scroll less.\n\n#couplesquestions #datenightideas #relationshipgoals #questionsforcouples #deepconversations #couplegoals #dateathome #conversationstarters",
-  "Couples", "Link in bio, tag LB-Couples / Instagram"),
- ("Wed Oct 28", "9:00 PM", "Thu 03:00", "Pinterest", "Video pin 12s", "Date Night Ideas at Home", "couples.jpg", "video-couples.mp4",
-  "Date night ideas at home: ask your partner this tonight. One question can start the best conversation of the week. Find 300 couples questions in 300 Questions Couples Should Ask, a thoughtful gift idea for anniversaries and Valentine's Day. Get it on Amazon.",
-  "Couples", "Amazon link, tag LB-Couples / Pinterest"),
- ("Thu Oct 29", "8:00 PM", "Fri 02:00", "TikTok", "Video 21s", "Personal account", "aboutme.jpg", "video-aboutme.mp4",
-  "3 questions. 5 seconds each. No overthinking ⏱️ Which one got you? Drop your answers below 👇 #getcurious #icebreakerquestions #questionsaboutme #conversationstarters #funquestions",
-  "About Me", "Link in bio (TikTok link later)"),
- ("Thu Oct 29", "8:00 PM", "Fri 02:00", "Instagram", "Reel 21s", "Shares to Facebook", "aboutme.jpg", "video-aboutme.mp4",
-  "Answer in 5 seconds. Don't overthink it. ⏱️\n\nWhich one got you? Drop your answers in the comments 👇\n\n300 more like these in 300 Questions About Me by Rann Lowe. Link in bio.\n\nGet curious. Scroll less.\n\n#icebreakerquestions #questionsaboutme #conversationstarters #funquestions #selfdiscovery #getcurious",
-  "About Me", "Link in bio, tag LB-AboutMe / Instagram"),
- ("Thu Oct 29", "9:00 PM", "Fri 03:00", "Pinterest", "Video pin 25s", "Activities for Seniors", "maze.jpg", "video-maze.mp4",
-  "Large print maze puzzles for seniors: can you solve this one in 15 seconds? A relaxing brain exercise and a thoughtful gift idea for grandparents. 100 easy mazes with solutions in Easy Maze Puzzle Book for Seniors. Get it on Amazon.",
-  "Mazes", "Amazon link, tag LB-Mazes / Pinterest"),
- ("Fri Oct 30", "8:00 PM", "Sat 02:00", "TikTok", "Video 25s", "Personal account", "maze.jpg", "video-maze.mp4",
-  "Can you beat this maze in 15 seconds? ⏱️ Start at the top, exit at the bottom. Pause if you need more time 😅 #mazepuzzle #puzzlebook #brainteaser #seniorsactivities #largeprint #puzzlesoftiktok",
-  "Mazes", "Link in bio (TikTok link later)"),
- ("Fri Oct 30", "8:00 PM", "Sat 02:00", "Instagram", "Reel 25s", "Shares to Facebook", "maze.jpg", "video-maze.mp4",
-  "Beat this maze in 15 seconds ⏱️\n\nStart at the top. Exit at the bottom. Pause it if you need more time.\n\n100 large-print mazes with solutions in Easy Maze Puzzle Book for Seniors by Rann Lowe. Link in bio.\n\nGet curious. Scroll less.\n\n#mazepuzzle #puzzlebook #brainteaser #seniorsactivities #largeprint #brainexercise",
-  "Mazes", "Link in bio, tag LB-Mazes / Instagram"),
- ("Sun Nov 1", "8:00 PM", "Mon 03:00", "Pinterest", "Video pin 21s", "Questions to Ask Yourself", "aboutme.jpg", "video-aboutme.mp4",
-  "Questions to ask yourself: answer these 3 in 5 seconds each, no overthinking. Fun self-discovery questions, icebreakers and journal prompts. 300 more in 300 Questions About Me, a great gift for anyone who loves a good conversation. Get it on Amazon.",
-  "About Me", "Amazon link, tag LB-AboutMe / Pinterest"),
-]
-
+# usage: python build.py <batches/YYYY-wNN.json> [out.html]  (thumbnails live next to the output in thumbs/)
+batch = json.load(open(sys.argv[1], encoding='utf-8'))
+OUT = sys.argv[2] if len(sys.argv) > 2 else 'index.html'
+WEEK = 'Week of ' + batch['range'].split(' to ')[0].replace('Mon ', '')
+LEDE = batch.get('lede', 'Every post planned for the week, in US Eastern time, because that is where most buyers are. Tap a thumbnail to open the full video or image.')
 e = html.escape
+posts = batch['posts']
 days = []
-for i, p in enumerate(P, 1):
-    if not days or days[-1][0] != p[0]:
-        days.append((p[0], []))
-    days[-1][1].append((i, p))
+for p in posts:
+    if not days or days[-1][0] != p['day_label']:
+        days.append((p['day_label'], []))
+    days[-1][1].append(p)
 
-def card(i, p):
-    day, t, tb, plat, fmt, target, thumb, media, cap, book, tag = p
-    cls = plat.lower()
+def card(p):
+    i = p['n']; plat = p['channel']; cls = plat.lower()
+    target = p.get('board') or p.get('link_note', '')
+    cap = (('Title: ' + p['title'] + '\n\n') if plat == 'Pinterest' else '') + p['caption']
+    tag = (p['attribution_campaign'] + ' / ' + plat + (' (pin link)' if plat == 'Pinterest' else ' (bio link)')) if p.get('attribution_tag_url') else p.get('link_note', '')
     return f'''<article class="post">
-  <a class="thumb" href="{BASE}{media}" target="_blank" rel="noopener" aria-label="Open the media for post {i}"><img src="thumbs/{thumb}" alt="" width="300" loading="lazy"></a>
+  <a class="thumb" href="{p['media_urls'][0]}" target="_blank" rel="noopener" aria-label="Open the media for post {i}"><img src="thumbs/{p['thumb']}" alt="" width="300" loading="lazy"></a>
   <div class="body">
     <div class="meta">
       <span class="num">#{i}</span>
       <span class="chip {cls}">{plat}</span>
-      <span class="fmt">{e(fmt)}</span>
-      <span class="when"><b>{t} ET</b> <span class="bucharest">{tb} Bucharest</span></span>
+      <span class="fmt">{e(p['format'])}</span>
+      <span class="when"><b>{p['time_et']} ET</b> <span class="bucharest">{p['time_bucharest']} Bucharest</span></span>
     </div>
     <p class="cap" id="cap{i}">{e(cap)}</p>
     <button class="more" type="button" aria-controls="cap{i}" aria-expanded="false">Show full caption</button>
     <dl class="facts">
-      <div><dt>Book</dt><dd>{e(book)}</dd></div>
+      <div><dt>Book</dt><dd>{e(p['book'])}</dd></div>
       <div><dt>{'Board' if plat == 'Pinterest' else 'Where'}</dt><dd>{e(target)}</dd></div>
       <div><dt>Tracking</dt><dd>{e(tag)}</dd></div>
     </dl>
@@ -71,7 +38,10 @@ def card(i, p):
 
 sections = []
 for d, items in days:
-    sections.append(f'<section class="day"><h2>{d}</h2><div class="list">' + "\n".join(card(i, p) for i, p in items) + '</div></section>')
+    sections.append(f'<section class="day"><h2>{d} · {len(items)} posts</h2><div class="list">' + "\n".join(card(p) for p in items) + '</div></section>')
+from collections import Counter
+cnt = Counter(p['channel'] for p in posts)
+STATUS = batch.get('status', 'Waiting for your approval')
 
 page = f'''<title>Lowe Books Weekly Review</title>
 <meta name="claude:viewport-fit-sides" content="cover">
@@ -147,16 +117,16 @@ footer p {{ margin: 0; }}
   <header>
     <div class="brand">Lowe Books · thelowebooks</div>
     <h1>{WEEK}: what goes out</h1>
-    <p class="lede">Every post in the queue, in US Eastern time, because that is where most buyers are. Tap a thumbnail to open the full video or image.</p>
+    <p class="lede">{e(LEDE)}</p>
   </header>
   <div class="summary" role="group" aria-label="Week summary">
-    <span><b>11</b> posts</span><span><b>4</b> Pinterest</span><span><b>3</b> TikTok</span><span><b>4</b> Instagram</span><span>Status: <b>Scheduled in Buffer</b></span>
+    <span><b>{len(posts)}</b> posts</span><span><b>{cnt["Pinterest"]}</b> Pinterest</span><span><b>{cnt["TikTok"]}</b> TikTok</span><span><b>{cnt["Instagram"]}</b> Instagram</span><span>Status: <b>{STATUS}</b></span>
   </div>
-  <div class="how"><b>How to approve</b><p>Tell Claude "approve all", or list the numbers to change, for example "change #3 and drop #7". Nothing is posted that you have not seen here.</p></div>
+  <div class="how"><b>How to approve</b><p>Tell Claude "approve all", or list the numbers to change, for example "change #3 and drop #7". Nothing is scheduled until you approve.</p></div>
   {"".join(sections)}
   <footer>
-    <p>Times: TikTok and Instagram at 8 PM Eastern (5 PM Pacific), Pinterest at 9 PM Eastern. US clocks go back on Sun Nov 1, so Bucharest times shift by one hour afterwards.</p>
-    <p>Facebook receives the Instagram posts through auto-share. Pinterest links carry Amazon Attribution tags so sales can be traced to each platform.</p>
+    <p>Times: videos on TikTok and Instagram at 8 PM Eastern (5 PM Pacific), the same video as a Pinterest video pin at 9 PM, image pins at 12 PM and 4 PM, Instagram carousels at 6 PM. US clocks went back on Sun Nov 1, so Bucharest is 7 hours ahead of Eastern this week.</p>
+    <p>Facebook is paused. Pinterest links carry Amazon Attribution tags so sales can be traced to each platform.</p>
   </footer>
 </div>
 <script>
@@ -170,5 +140,5 @@ document.querySelectorAll('.more').forEach(function (b) {{
 }});
 </script>
 '''
-open('index.html', 'w', encoding='utf-8').write(page)
+open(OUT, 'w', encoding='utf-8').write(page)
 print(len(page))
