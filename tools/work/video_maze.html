@@ -7,7 +7,8 @@ body{background:var(--ink)}
 #hook{justify-content:center;padding:0 90px;gap:40px}
 #hook h1{font-size:156px;margin:0}
 #hook p{font-size:60px;font-weight:600;margin:0;color:var(--yellow)}
-#play{align-items:center;padding-top:250px;gap:40px}
+#play{align-items:center;padding-top:240px;gap:36px}
+.mh{font-size:84px;line-height:1.02;text-align:center;width:920px}
 .head{height:200px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:22px;width:920px}
 .secs{font-size:150px;color:var(--yellow);line-height:1}
 .bar{width:920px;height:18px;border-radius:9px;background:rgba(255,245,220,.18);overflow:hidden}
@@ -25,15 +26,15 @@ body{background:var(--ink)}
 </style></head>
 <body><div class="frame">
 <div class="brand label">Lowe Books</div>
-<section id="hook" class="scene"><h1 class="display">Beat this maze in 15&nbsp;seconds.</h1><p>Start at the top. Exit at the bottom.</p></section>
 <section id="play" class="scene">
-  <div class="head"><div class="secs display" id="secs">15</div><div class="bar"><div id="bar"></div></div><div class="up display" id="up">Time's up.</div></div>
+  <div class="mh display">Beat this maze in 10&nbsp;seconds.</div>
+  <div class="head"><div class="secs display" id="secs">10</div><div class="bar"><div id="bar"></div></div><div class="up display" id="up">Time's up.</div></div>
   <div class="mazecard"><img src="../maze/assets/maze_ink.png"><img id="path" src="../maze/assets/path_000.png" style="opacity:0"></div>
-  <div class="tip" id="tip">Pause it if you need more time.</div>
+  <div class="tip" id="tip">Start at the top. Exit at the bottom.</div>
 </section>
 <section id="end" class="scene">
-  <h1 class="display">100 large-print mazes.</h1>
-  <p class="sub">Solutions included.</p>
+  <h1 class="display">Did you make it?</h1>
+  <p class="sub">Tell us in the comments. 100 more mazes, solutions included.</p>
   <div class="title display">Easy Maze Puzzle Book for Seniors</div>
   <div class="book">by Rann Lowe · on Amazon</div>
   <div class="tag">Get curious. Scroll less.</div>
@@ -41,16 +42,15 @@ body{background:var(--ink)}
 </div>
 <script src="anim.js"></script>
 <script>
-const HOOK = 2.4, SECS = 15, UP = HOOK + SECS, DRAW = 2.0, END = UP + 4.2;
-window.DURATION = END + 3.8;
-window.EVENTS = [['pop', HOOK]];
+const HOOK = 0, SECS = 10, UP = HOOK + SECS, DRAW = 2.0, END = UP + 3.2;
+window.DURATION = END + 3.2;
+window.EVENTS = [];
 for (let s = 1; s < SECS; s++) EVENTS.push([s >= SECS - 3 ? 'tickhi' : 'tick', HOOK + s]);
 EVENTS.push(['ding', UP]); EVENTS.push(['ding', END]);
 const pre = []; for (let i = 0; i <= 60; i++) { const im = new Image(); pre.push(new Promise(r => { im.onload = r; im.onerror = () => r('err'); })); im.src = `../maze/assets/path_${String(i).padStart(3, '0')}.png`; }
 window.__ready = Promise.all([document.fonts.ready, ...pre]).then(() => true);
 function render(t) {
-  show(document.getElementById('hook'), t, 0, HOOK);
-  show(document.getElementById('play'), t, HOOK, END, {rise: 0});
+  show(document.getElementById('play'), t, HOOK - 1, END, {rise: 0, fin: 0.001});
   const left = clamp(SECS - (t - HOOK), 0, SECS);
   const playing = t < UP;
   document.getElementById('secs').style.display = playing ? 'block' : 'none';

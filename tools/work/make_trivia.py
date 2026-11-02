@@ -1,6 +1,8 @@
 """Generate a timed trivia video page from a config.
 usage: python make_trivia.py <config.json> <out.html>
-config: {bg, ink, accent, hook, hookSub, qs:[{q, options?:[..], answer:"B"|"text", note?}], endTitle, endBook, per?}
+config: {bg, fg?, accent, hook, qs:[{q, options?:[..], answer:"B"|"text"}], endTitle, endBook, per?, endAuthor?}
+Use 2 questions (about 16 s). The video opens directly on question 1 with the timer running; `hook`
+is a short headline shown above the question (no separate title screen). The end card asks for the score.
 Open-ended questions have no options; answer is the text shown at the reveal.
 """
 import json, sys
@@ -15,7 +17,8 @@ body{background:var(--bg)}
 #hook{justify-content:center;padding:0 90px;gap:40px}
 #hook h1{font-size:150px;margin:0}
 #hook p{font-size:68px;font-weight:700;margin:0;color:var(--acc)}
-#q{align-items:center;justify-content:center;padding:150px 80px 0;gap:44px}
+#q{align-items:center;justify-content:center;padding:150px 80px 0;gap:40px}
+#q .qhook{font-size:76px;line-height:1.02;text-align:center;max-width:920px;color:var(--fg)}
 #q .count{font-size:38px;color:var(--acc)}
 #q .card{width:920px;padding:64px 60px;display:flex;align-items:center}
 #q .card .display{font-size:__QSIZE__px;line-height:1.08}
@@ -42,6 +45,7 @@ body{background:var(--bg)}
 <div class="brand label">Lowe Books</div>
 <section id="hook" class="scene"><h1 class="display" id="h1"></h1><p class="display" id="h2"></p></section>
 <section id="q" class="scene">
+  <div class="qhook display" id="qh"></div>
   <div class="count label" id="count"></div>
   <div class="card"><div class="display" id="qtext"></div></div>
   <div class="opts" id="opts"></div>
@@ -51,8 +55,8 @@ body{background:var(--bg)}
   </div>
 </section>
 <section id="end" class="scene">
-  <h1 class="display">How many did you get?</h1>
-  <p class="sub">Tell us in the comments.</p>
+  <h1 class="display">What's your score?</h1>
+  <p class="sub" id="esub"></p>
   <div class="book" id="endBook"></div>
   <div class="title display" id="endTitle"></div>
   <div class="book" id="endAuthor"></div>
@@ -62,26 +66,25 @@ body{background:var(--bg)}
 <script src="anim.js"></script>
 <script>
 const CFG = __CFG__;
-const QS = CFG.qs, PER = CFG.per || 7.5, TIME = 5, HOOK = 2.5, END = HOOK + QS.length * PER;
+const QS = CFG.qs, PER = CFG.per || 6.5, TIME = 5, HOOK = 0, END = HOOK + QS.length * PER;
 window.DURATION = END + 3.5;
 window.EVENTS = [];
 QS.forEach((_, i) => { const s = HOOK + i * PER; EVENTS.push(['pop', s]); for (let k = 1; k < TIME; k++) EVENTS.push([k >= TIME - 2 ? 'tickhi' : 'tick', s + k]); EVENTS.push(['ding', s + TIME]); });
 EVENTS.push(['pop', END]);
-document.getElementById('h1').textContent = CFG.hook;
-document.getElementById('h2').textContent = CFG.hookSub;
+document.getElementById('qh').textContent = CFG.hook || '';
+document.getElementById('esub').textContent = 'Out of ' + QS.length + '. Tell us in the comments.';
 document.getElementById('endBook').textContent = CFG.endBook;
 document.getElementById('endTitle').textContent = CFG.endTitle;
 document.getElementById('endAuthor').textContent = CFG.endAuthor || 'by Rann Lowe';
 const L = 'ABCD';
 function render(t) {
-  show(document.getElementById('hook'), t, 0, HOOK);
   const q = document.getElementById('q');
   if (t >= HOOK && t < END) {
     const i = Math.floor((t - HOOK) / PER), lt = t - HOOK - i * PER, d = QS[i];
-    q.style.opacity = Math.min(1, (t - HOOK) / 0.25, (END - t) / 0.2);
-    document.getElementById('count').textContent = (i + 1) + ' / ' + QS.length;
+    q.style.opacity = Math.min(1, (END - t) / 0.2);
+    document.getElementById('count').textContent = 'Question ' + (i + 1) + ' of ' + QS.length + ' · 5 seconds';
     const qt = document.getElementById('qtext'); qt.textContent = d.q;
-    const p = ease(lt / 0.25);
+    const p = i === 0 ? 1 : ease(lt / 0.25);
     qt.parentElement.style.transform = 'scale(' + (0.94 + 0.06 * p) + ')'; qt.style.opacity = p;
     const reveal = lt >= TIME;
     const od = document.getElementById('opts');

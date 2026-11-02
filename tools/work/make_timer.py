@@ -1,6 +1,8 @@
-"""Generate a 3-question timer challenge video page from a config.
+"""Generate a timer challenge video page from a config (use 2 questions, about 14 s).
 usage: python make_timer.py <config.json> <out.html>
-config: {bg, fg, acc, ring, hook, hookSub, qs:[..], qsize?, endH, endSub, endLead, endTitle}
+config: {bg, fg, acc, ring, hook, qs:[..], qsize?, endH, endSub, endLead, endTitle}
+The video opens directly on question 1 with the timer running; `hook` is a short headline above the card
+(no separate title screen). endH/endSub should ask a real question that invites comments.
 bg = background, fg = text on the background, acc = hook sub line / label colour, ring = timer ring colour.
 The question card is always cream with ink text. Question text is supplied by the config (kept out of the repo).
 """
@@ -16,9 +18,10 @@ body{background:var(--bg)}
 #hook{justify-content:center;padding:0 90px;gap:36px}
 #hook h1{font-size:__HSIZE__px;margin:0}
 #hook p{font-size:__SSIZE__px;margin:0;color:var(--acc)}
-#q{align-items:center;justify-content:center;padding:0 80px;gap:56px}
+#q{align-items:center;justify-content:center;padding:0 80px;gap:48px}
+#q .qhook{font-size:80px;line-height:1.02;text-align:center;max-width:920px;color:var(--fg)}
 #q .count{font-size:40px;color:var(--fg)}
-#q .card{width:920px;min-height:620px;padding:72px 70px;display:flex;align-items:center;color:#1E1A16}
+#q .card{width:920px;min-height:520px;padding:72px 70px;display:flex;align-items:center;color:#1E1A16}
 #q .card div{font-size:__QSIZE__px;line-height:1.08}
 .timer{position:relative;width:260px;height:260px}
 .timer svg{position:absolute;inset:0}
@@ -34,6 +37,7 @@ body{background:var(--bg)}
 <div class="brand label">Lowe Books</div>
 <section id="hook" class="scene"><h1 class="display" id="h1"></h1><p class="display" id="h2"></p></section>
 <section id="q" class="scene">
+  <div class="qhook display" id="qh"></div>
   <div class="count label" id="count"></div>
   <div class="card"><div class="display" id="qtext"></div></div>
   <div class="timer"><svg viewBox="0 0 260 260"><circle cx="130" cy="130" r="112" fill="none" stroke="rgba(128,128,128,.28)" stroke-width="18"/><circle id="ring" cx="130" cy="130" r="112" fill="none" stroke="var(--ring)" stroke-width="18" stroke-linecap="round" stroke-dasharray="703.7" transform="rotate(-90 130 130)"/></svg><div class="num display" id="num">5</div></div>
@@ -51,26 +55,24 @@ body{background:var(--bg)}
 <script>
 const C = __CFG__;
 const QS = C.qs;
-const HOOK = 2.5, PER = 5, END = HOOK + QS.length * PER;
+const HOOK = 0, PER = 5, END = HOOK + QS.length * PER;
 window.DURATION = END + 3.5;
 window.EVENTS = [];
 QS.forEach((_, i) => { const s = HOOK + i * PER; EVENTS.push(['pop', s]); for (let k = 1; k < PER; k++) EVENTS.push([k >= PER - 2 ? 'tickhi' : 'tick', s + k]); });
 EVENTS.push(['ding', END]);
-document.getElementById('h1').textContent = C.hook;
-document.getElementById('h2').textContent = C.hookSub;
+document.getElementById('qh').textContent = C.hook || '';
 document.getElementById('eh').textContent = C.endH;
 document.getElementById('es').textContent = C.endSub;
 document.getElementById('el').textContent = C.endLead;
 document.getElementById('et').textContent = C.endTitle;
 function render(t) {
-  show(document.getElementById('hook'), t, 0, HOOK);
   const q = document.getElementById('q');
   if (t >= HOOK && t < END) {
     const i = Math.floor((t - HOOK) / PER), lt = t - HOOK - i * PER;
-    q.style.opacity = Math.min(1, (t - HOOK) / 0.25, (END - t) / 0.2);
-    document.getElementById('count').textContent = (i + 1) + ' / ' + QS.length;
+    q.style.opacity = Math.min(1, (END - t) / 0.2);
+    document.getElementById('count').textContent = 'Question ' + (i + 1) + ' of ' + QS.length + ' · 5 seconds';
     const qt = document.getElementById('qtext'); qt.textContent = QS[i];
-    const p = ease(lt / 0.25);
+    const p = i === 0 ? 1 : ease(lt / 0.25);
     qt.parentElement.style.transform = 'scale(' + (0.94 + 0.06 * p) + ')'; qt.style.opacity = p;
     document.getElementById('num').textContent = Math.max(1, PER - Math.floor(lt));
     document.getElementById('ring').style.strokeDashoffset = 703.7 * clamp(lt / PER, 0, 1);
