@@ -15,8 +15,8 @@ for p in posts:
 def card(p):
     i = p['n']; plat = p['channel']; cls = plat.lower()
     target = p.get('board') or p.get('link_note', '')
-    cap = (('Title: ' + p['title'] + '\n\n') if plat == 'Pinterest' else '') + p['caption']
-    tag = (p['attribution_campaign'] + ' / ' + plat + (' (pin link)' if plat == 'Pinterest' else ' (bio link)')) if p.get('attribution_tag_url') else p.get('link_note', '')
+    cap = (('Title: ' + p['title'] + '\n\n') if plat == 'Pinterest' else '') + p['caption'] + (('\n\nFirst comment: ' + p['firstComment']) if p.get('firstComment') else '')
+    tag = (p['attribution_campaign'] + ' / ' + plat + {'Pinterest': ' (pin link)', 'Facebook': ' (first comment)'}.get(plat, ' (bio link)')) if p.get('attribution_tag_url') else p.get('link_note', '')
     slides = ''
     if len(p['media_urls']) > 1:
         slides = '<div class="slides">' + ''.join(f'<a href="{u}" target="_blank" rel="noopener" aria-label="Open slide {k} of post {i}"><img src="thumbs/{p["thumb"][:-4]}_{k-1}.jpg" alt="Slide {k}" width="150" loading="lazy"></a>' for k, u in enumerate(p['media_urls'], 1)) + '</div>'
@@ -97,6 +97,7 @@ h2::after {{ content: ""; flex: 1; height: 1px; background: var(--line); }}
 .chip.pinterest {{ color: var(--accent); }}
 .chip.instagram {{ color: var(--gold); }}
 .chip.tiktok {{ color: var(--teal); }}
+.chip.facebook {{ color: var(--teal); }}
 .fmt {{ color: var(--muted); }}
 .when {{ margin-left: auto; font-variant-numeric: tabular-nums; text-align: right; }}
 .when .bucharest {{ color: var(--muted); font-size: 12px; margin-left: 6px; }}
@@ -126,13 +127,13 @@ footer p {{ margin: 0; }}
     <p class="lede">{e(LEDE)}</p>
   </header>
   <div class="summary" role="group" aria-label="Week summary">
-    <span><b>{len(posts)}</b> posts</span><span><b>{cnt["Pinterest"]}</b> Pinterest</span><span><b>{cnt["TikTok"]}</b> TikTok</span><span><b>{cnt["Instagram"]}</b> Instagram</span><span>Status: <b>{STATUS}</b></span>
+    <span><b>{len(posts)}</b> posts</span><span><b>{cnt["Pinterest"]}</b> Pinterest</span><span><b>{cnt["Instagram"]}</b> Instagram</span><span><b>{cnt["Facebook"]}</b> Facebook</span><span>Status: <b>{STATUS}</b></span>
   </div>
   <div class="how"><b>How to approve</b><p>Tell Claude "approve all", or list the numbers to change, for example "change #3 and drop #7". Nothing is scheduled until you approve.</p></div>
   {"".join(sections)}
   <footer>
-    <p>Times: videos on TikTok and Instagram at 8 PM Eastern (5 PM Pacific), the same video as a Pinterest video pin at 9 PM, image pins at 12 PM and 4 PM, Instagram carousels at 6 PM. US clocks went back on Sun Nov 1, so Bucharest is 7 hours ahead of Eastern this week.</p>
-    <p>Facebook is paused. Pinterest links carry Amazon Attribution tags so sales can be traced to each platform.</p>
+    <p>Times: videos on Instagram and Facebook Reels at 8 PM Eastern (5 PM Pacific), the same video as a Pinterest video pin at 9 PM, image pins at 12 PM and 4 PM, carousels on Instagram and Facebook at 6 PM. US clocks went back on Sun Nov 1, so Bucharest is 7 hours ahead of Eastern this week.</p>
+    <p>Pinterest links carry Amazon Attribution tags; Facebook posts carry the Facebook tag in the first comment, Instagram uses the bio links. Sales can be traced to each platform.</p>
   </footer>
 </div>
 <script>
