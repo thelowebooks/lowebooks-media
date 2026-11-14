@@ -26,10 +26,10 @@ def card(p):
     <div class="meta">
       <span class="num">#{i}</span>
       <span class="chip {cls}">{plat}</span>
-      <span class="fmt">{e(p['format'])}</span>
+      <span class="fmt">{e(p['format'])}</span>{('<span class="chip exp" title="' + e(p.get('experiment_note','')) + '">Experiment</span>') if p.get('experiment') else ''}
       <span class="when"><b>{p['time_et']} ET</b> <span class="bucharest">{p['time_bucharest']} Bucharest</span></span>
     </div>
-    <p class="cap" id="cap{i}">{e(cap)}</p>
+    <p class="cap" id="cap{i}">{e(cap)}</p>{('<p class="exp-note">Experiment: ' + e(p['experiment_note']) + '</p>') if p.get('experiment') else ''}
     {slides}
     <button class="more" type="button" aria-controls="cap{i}" aria-expanded="false">Show full caption</button>
     <dl class="facts">
@@ -46,6 +46,12 @@ for d, items in days:
 from collections import Counter
 cnt = Counter(p['channel'] for p in posts)
 STATUS = batch.get('status', 'Waiting for your approval')
+INS = batch.get('insights')
+def _ul(items): return '<ul>' + ''.join('<li>' + e(x) + '</li>' for x in items) + '</ul>'
+INS_HTML = ''
+if INS:
+    plats = ''.join('<h4>' + n + '</h4><p>' + e(INS[k]['summary']) + '</p><p class="small"><b>Best:</b></p>' + _ul(INS[k]['best']) + '<p class="small"><b>Worst:</b></p>' + _ul(INS[k]['worst']) + (('<p class="small">' + e(INS[k]['errors']) + '</p>') if INS[k].get('errors') else '') for k, n in (('instagram', 'Instagram'), ('facebook', 'Facebook'), ('pinterest', 'Pinterest')))
+    INS_HTML = '<details class="ins"><summary><h3 style="display:inline">What last week showed, and what changed (tap to open)</h3></summary>' + '<p class="small">' + e(INS['data_note']) + '</p>' + '<h4>Adjustments made to this batch</h4>' + _ul(INS['adjustments']) + plats + '<p class="small">' + e(INS['caveats']) + '</p></details>'
 
 page = f'''<title>Lowe Books Weekly Review</title>
 <meta name="claude:viewport-fit-sides" content="cover">
@@ -98,6 +104,14 @@ h2::after {{ content: ""; flex: 1; height: 1px; background: var(--line); }}
 .chip.instagram {{ color: var(--gold); }}
 .chip.tiktok {{ color: var(--teal); }}
 .chip.facebook {{ color: var(--teal); }}
+.chip.exp {{ color: var(--gold); background: var(--tint); }}
+.exp-note {{ margin: 0; font-size: 13px; color: var(--muted); }}
+.ins {{ background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 14px 16px; display: grid; gap: 10px; }}
+.ins h3 {{ font: 600 13px/1 var(--body); letter-spacing: .12em; text-transform: uppercase; color: var(--muted); margin: 0; }}
+.ins h4 {{ font: 600 15px var(--display); margin: 8px 0 2px; }}
+.ins p, .ins ul {{ margin: 0; }}
+.ins ul {{ padding-left: 18px; display: grid; gap: 4px; }}
+.ins .small {{ font-size: 13px; color: var(--muted); }}
 .fmt {{ color: var(--muted); }}
 .when {{ margin-left: auto; font-variant-numeric: tabular-nums; text-align: right; }}
 .when .bucharest {{ color: var(--muted); font-size: 12px; margin-left: 6px; }}
@@ -130,9 +144,10 @@ footer p {{ margin: 0; }}
     <span><b>{len(posts)}</b> posts</span><span><b>{cnt["Pinterest"]}</b> Pinterest</span><span><b>{cnt["Instagram"]}</b> Instagram</span><span><b>{cnt["Facebook"]}</b> Facebook</span><span>Status: <b>{STATUS}</b></span>
   </div>
   <div class="how"><b>How to approve</b><p>Tell Claude "approve all", or list the numbers to change, for example "change #3 and drop #7". Nothing is scheduled until you approve.</p></div>
+  {INS_HTML}
   {"".join(sections)}
   <footer>
-    <p>Times: videos on Instagram and Facebook Reels at 8 PM Eastern (5 PM Pacific), the same video as a Pinterest video pin at 9 PM, image pins at 12 PM and 4 PM, carousels on Instagram and Facebook at 6 PM. US clocks went back on Sun Nov 1, so Bucharest is 7 hours ahead of Eastern this week.</p>
+    <p>Times: videos on Instagram and Facebook Reels at 8 PM Eastern (5 PM Pacific), the same video as a Pinterest video pin at 9 PM, image pins at 12 PM and 4 PM (Pinterest also at 9 PM), carousels on Instagram and Facebook at 6 PM. US clocks went back on Sun Nov 1, so Bucharest is 7 hours ahead of Eastern this week.</p>
     <p>Pinterest links carry Amazon Attribution tags; Facebook posts carry the Facebook tag in the first comment, Instagram uses the bio links. Sales can be traced to each platform.</p>
   </footer>
 </div>
