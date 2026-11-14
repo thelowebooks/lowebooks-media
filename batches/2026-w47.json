@@ -2,7 +2,7 @@
  "week": "2026-w47",
  "range": "Mon Nov 16 to Sun Nov 22, 2026",
  "timezone_note": "US clocks are on standard time (ET = EST, UTC-5); Bucharest = EET (UTC+2). All times computed with Python zoneinfo.",
- "status": "Waiting for your approval",
+ "status": "approved and scheduled in Buffer on 2026-11-14",
  "lede": "Next week's batch, Mon Nov 16 to Sun Nov 22: 7 evening videos (Instagram Reels, Facebook Reels, and 6 Pinterest video pins), 14 image pins and 2 carousels (Instagram and Facebook). Built from last week's Buffer data: 3 maze videos (the one format that broke out), fewer timer videos, a Memory Lane push, Thanksgiving and Black Friday gift pins, and 8 posts labeled as experiments. Tap a thumbnail to open the full media.",
  "insights": {
   "data_note": "Pulled from Buffer on Sat Nov 14 (2:40 AM ET): posts sent Oct 31 to Nov 14, plus aggregates for Nov 7-14 vs Oct 31-Nov 6. Posts under 24 h old (Fri Nov 13 evening) were ignored; Pinterest lags more, so the last ~8 pins (0 impressions) are ignored too. Sample sizes are tiny, so these are hints, not trends.",
