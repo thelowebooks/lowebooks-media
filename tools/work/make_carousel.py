@@ -1,5 +1,6 @@
 """Generate a 5-slide Instagram carousel page (1080x1350) from a config; render with render.py still <html> 1080 1350 <prefix> 0 1 2 3 4
 usage: python make_carousel.py <config.json> <out.html>
+followcard: true replaces the book end slide by a "save and follow" card (config keys saveH, saveSub, followH, followSub).
 config: {c0 (hook slide bg), c0fg, num (numeral colour), hint (hint colour), c4 (end slide bg), c4fg, c4acc, h0, p0, qs:[{q,hint}], endH, endLead, endTitle}
 """
 import json, sys, html
@@ -8,6 +9,10 @@ e = html.escape
 qs = ''.join(f'''<section class="slide qs" id="s{i+1}"><div class="top label"><span>Lowe Books</span><span>{i+2} / 5</span></div><div class="n display">{i+1}</div>
   <div class="q display">{e(q['q'])}</div><div class="hint">{e(q['hint'])}</div></section>
 ''' for i, q in enumerate(c['qs']))
+if c.get('followcard'):
+    END4 = f"<div><h1 class=\"display\">{e(c['saveH'])}</h1><div class=\"from\">{e(c['saveSub'])}</div><div class=\"title display\" style=\"margin-top:56px;color:{c['c4acc']}\">{e(c['followH'])}</div><div class=\"from\">{e(c['followSub'])}</div></div>"
+else:
+    END4 = f"<div><h1 class=\"display\">{e(c['endH'])}</h1><div class=\"from\">{e(c['endLead'])}</div><div class=\"title display\">{e(c['endTitle'])}</div><div class=\"from\">{e(c.get('byline','by Rann Lowe · link in bio'))}</div></div>"
 page = f'''<!doctype html>
 <html><head><meta charset="utf-8"><link rel="stylesheet" href="base.css">
 <style>
@@ -32,7 +37,7 @@ page = f'''<!doctype html>
 <section class="slide" id="s0"><div class="top label"><span>Lowe Books</span><span>1 / 5</span></div>
   <div><h1 class="display">{e(c['h0'])}</h1><p>{e(c['p0'])}</p></div><div class="arrow">Swipe →</div></section>
 {qs}<section class="slide" id="s4"><div class="top label"><span>Lowe Books</span><span>5 / 5</span></div>
-  <div><h1 class="display">{e(c['endH'])}</h1><div class="from">{e(c['endLead'])}</div><div class="title display">{e(c['endTitle'])}</div><div class="from">by Rann Lowe · link in bio</div></div>
+  {END4}
   <div class="tag">Get curious. Scroll less.</div></section>
 </div>
 <script src="anim.js"></script>

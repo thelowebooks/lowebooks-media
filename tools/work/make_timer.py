@@ -1,6 +1,9 @@
 """Generate a timer challenge video page from a config (use 2 questions, about 14 s).
 usage: python make_timer.py <config.json> <out.html>
-config: {bg, fg, acc, ring, hook, qs:[..], qsize?, endH, endSub, endLead, endTitle}
+config: {bg, fg, acc, ring, hook, qs:[..], qsize?, endH, endSub, endLead, endTitle,
+         series?, ans?:[..], follow?, tomorrow?}
+series = small tag above the hook in the first frame (Instagram series name). ans = optional answers, shown for 1.5 s after each
+5 s timer (open nostalgia quizzes). follow/tomorrow = plain follow line and next-day teaser on the end card.
 The video opens directly on question 1 with the timer running; `hook` is a short headline above the card
 (no separate title screen). endH/endSub should ask a real question that invites comments.
 bg = background, fg = text on the background, acc = hook sub line / label colour, ring = timer ring colour.
@@ -19,6 +22,7 @@ body{background:var(--bg)}
 #hook h1{font-size:__HSIZE__px;margin:0}
 #hook p{font-size:__SSIZE__px;margin:0;color:var(--acc)}
 #q{align-items:center;justify-content:center;padding:0 80px;gap:48px}
+#q .series{font-size:34px;color:var(--bg);background:var(--acc);border-radius:999px;padding:14px 30px}
 #q .qhook{font-size:80px;line-height:1.02;text-align:center;max-width:920px;color:var(--fg)}
 #q .count{font-size:40px;color:var(--fg)}
 #q .card{width:920px;min-height:520px;padding:72px 70px;display:flex;align-items:center;color:#1E1A16}
@@ -31,16 +35,22 @@ body{background:var(--bg)}
 #end .sub{font-size:56px;font-weight:500;margin:0 0 60px;color:var(--acc)}
 #end .book{font-size:40px;font-weight:500}
 #end .title{font-size:78px}
-#end .tag{font-size:44px;font-weight:700;margin-top:60px;color:var(--acc)}
+#end .tag{font-size:44px;font-weight:700;margin-top:40px;color:var(--acc)}
+#end .follow{font-size:54px;font-weight:700;margin-top:36px;color:var(--fg)}
+#end .tmr{font-size:44px;font-weight:500;color:var(--acc)}
+.answer{display:none;font-size:80px;text-align:center;color:var(--acc);line-height:1.05;max-width:920px}
+.answer small{display:block;font-size:34px;letter-spacing:.18em;text-transform:uppercase;color:var(--fg);margin-bottom:12px;font-family:'DM Sans',sans-serif;font-weight:700}
 </style></head>
 <body><div class="frame">
 <div class="brand label">Lowe Books</div>
 <section id="hook" class="scene"><h1 class="display" id="h1"></h1><p class="display" id="h2"></p></section>
 <section id="q" class="scene">
+  <div class="series label" id="ser" style="display:none"></div>
   <div class="qhook display" id="qh"></div>
   <div class="count label" id="count"></div>
   <div class="card"><div class="display" id="qtext"></div></div>
-  <div class="timer"><svg viewBox="0 0 260 260"><circle cx="130" cy="130" r="112" fill="none" stroke="rgba(128,128,128,.28)" stroke-width="18"/><circle id="ring" cx="130" cy="130" r="112" fill="none" stroke="var(--ring)" stroke-width="18" stroke-linecap="round" stroke-dasharray="703.7" transform="rotate(-90 130 130)"/></svg><div class="num display" id="num">5</div></div>
+  <div class="answer display" id="answer"></div>
+  <div class="timer" id="timer"><svg viewBox="0 0 260 260"><circle cx="130" cy="130" r="112" fill="none" stroke="rgba(128,128,128,.28)" stroke-width="18"/><circle id="ring" cx="130" cy="130" r="112" fill="none" stroke="var(--ring)" stroke-width="18" stroke-linecap="round" stroke-dasharray="703.7" transform="rotate(-90 130 130)"/></svg><div class="num display" id="num">5</div></div>
 </section>
 <section id="end" class="scene">
   <h1 class="display" id="eh"></h1>
@@ -48,6 +58,8 @@ body{background:var(--bg)}
   <div class="book" id="el"></div>
   <div class="title display" id="et"></div>
   <div class="book">by Rann Lowe · on Amazon</div>
+  <div class="follow display" id="ef" style="display:none"></div>
+  <div class="tmr" id="etm" style="display:none"></div>
   <div class="tag">Get curious. Scroll less.</div>
 </section>
 </div>
@@ -55,12 +67,15 @@ body{background:var(--bg)}
 <script>
 const C = __CFG__;
 const QS = C.qs;
-const HOOK = 0, PER = 5, END = HOOK + QS.length * PER;
-window.DURATION = END + 3.5;
+const ANS = C.ans || null, TIME = 5, HOOK = 0, PER = ANS ? 6.5 : 5, END = HOOK + QS.length * PER;
+window.DURATION = END + (C.follow ? 4 : 3.5);
 window.EVENTS = [];
-QS.forEach((_, i) => { const s = HOOK + i * PER; EVENTS.push(['pop', s]); for (let k = 1; k < PER; k++) EVENTS.push([k >= PER - 2 ? 'tickhi' : 'tick', s + k]); });
+QS.forEach((_, i) => { const s = HOOK + i * PER; EVENTS.push(['pop', s]); for (let k = 1; k < TIME; k++) EVENTS.push([k >= TIME - 2 ? 'tickhi' : 'tick', s + k]); if (ANS) EVENTS.push(['ding', s + TIME]); });
 EVENTS.push(['ding', END]);
 document.getElementById('qh').textContent = C.hook || '';
+if (C.series) { const e = document.getElementById('ser'); e.textContent = C.series; e.style.display = 'block'; }
+if (C.follow) { const e = document.getElementById('ef'); e.textContent = C.follow; e.style.display = 'block'; }
+if (C.tomorrow) { const e = document.getElementById('etm'); e.textContent = C.tomorrow; e.style.display = 'block'; }
 document.getElementById('eh').textContent = C.endH;
 document.getElementById('es').textContent = C.endSub;
 document.getElementById('el').textContent = C.endLead;
@@ -70,12 +85,16 @@ function render(t) {
   if (t >= HOOK && t < END) {
     const i = Math.floor((t - HOOK) / PER), lt = t - HOOK - i * PER;
     q.style.opacity = Math.min(1, (END - t) / 0.2);
-    document.getElementById('count').textContent = 'Question ' + (i + 1) + ' of ' + QS.length + ' · 5 seconds';
+    document.getElementById('count').textContent = (QS.length > 1 ? 'Question ' + (i + 1) + ' of ' + QS.length + ' · ' : '') + '5 seconds';
     const qt = document.getElementById('qtext'); qt.textContent = QS[i];
     const p = i === 0 ? 1 : ease(lt / 0.25);
     qt.parentElement.style.transform = 'scale(' + (0.94 + 0.06 * p) + ')'; qt.style.opacity = p;
-    document.getElementById('num').textContent = Math.max(1, PER - Math.floor(lt));
-    document.getElementById('ring').style.strokeDashoffset = 703.7 * clamp(lt / PER, 0, 1);
+    const rev = ANS && lt >= TIME;
+    document.getElementById('timer').style.display = rev ? 'none' : 'block';
+    const an = document.getElementById('answer'); an.style.display = rev ? 'block' : 'none';
+    if (rev) an.innerHTML = '<small>Answer</small>' + ANS[i];
+    document.getElementById('num').textContent = Math.max(1, TIME - Math.floor(lt));
+    document.getElementById('ring').style.strokeDashoffset = 703.7 * clamp(lt / TIME, 0, 1);
   } else q.style.opacity = 0;
   show(document.getElementById('end'), t, END, DURATION + 1, {noOut: true});
 }

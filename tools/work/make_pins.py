@@ -34,6 +34,8 @@ ol li{display:flex;gap:22px;align-items:flex-start;font-family:'Bricolage',sans-
 ol li b{flex:0 0 58px;height:58px;border-radius:50%;background:var(--acc);color:var(--onacc);display:flex;align-items:center;justify-content:center;font-size:32px;font-weight:800}
 .opts{display:flex;flex-direction:column;gap:18px;margin-top:40px}
 .opt{display:flex;align-items:center;gap:24px;background:var(--fg);color:var(--bg);border-radius:28px;padding:20px 30px;font-size:40px;font-weight:700}
+.opt.good{background:var(--acc);color:var(--onacc)}
+.opt.dim{opacity:.35}
 .opt b{flex:0 0 60px;height:60px;border-radius:50%;background:var(--acc);color:var(--onacc);display:flex;align-items:center;justify-content:center;font-family:'Bricolage',sans-serif;font-weight:800;font-size:36px}
 .spacer{flex:1}
 .hint{font-size:26px;color:var(--acc);margin-top:30px;margin-bottom:26px}
@@ -66,11 +68,13 @@ def hook_pin(key, headline, label, q, lead):
 {foot(b, lead)}</div>"""
     return page(b, body)
 
-def mc_pin(key, headline, q, opts):
+def mc_pin(key, headline, q, opts, answer=None):
+    """answer='B' reveals the right option on the image (experiment); default keeps the answer in the description."""
     b = BOOKS[key]
-    o = ''.join(f'<div class="opt"><b>{l}</b><span>{html.escape(t)}</span></div>' for l, t in zip('ABCD', opts))
+    o = ''.join(f'<div class="opt{" good" if l == answer else (" dim" if answer else "")}"><b>{l}</b><span>{html.escape(t)}</span></div>' for l, t in zip('ABCD', opts))
+    hint = 'Answer on the image. More in the book.' if answer else 'Answer in the description'
     body = f"""<div class="frame"><div class="top label">Lowe Books</div><h1 class="display">{headline}</h1>
-<div class="card"><div class="display">{html.escape(q)}</div></div><div class="opts">{o}</div><div class="hint label">Answer in the description</div>
+<div class="card"><div class="display">{html.escape(q)}</div></div><div class="opts">{o}</div><div class="hint label">{hint}</div>
 <div class="spacer"></div>{foot(b, 'One of 300 questions in')}</div>"""
     return page(b, body)
 

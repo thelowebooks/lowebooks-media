@@ -4,6 +4,8 @@ config: {bg, fg?, accent, hook, qs:[{q, options?:[..], answer:"B"|"text"}], endT
 Use 2 questions (about 16 s). The video opens directly on question 1 with the timer running; `hook`
 is a short headline shown above the question (no separate title screen). The end card asks for the score.
 Open-ended questions have no options; answer is the text shown at the reveal.
+Optional: series (tag above the hook in the first frame), endH, endSub, follow (plain follow line), tomorrow (next-day teaser).
+One question gives a short ~10 s video (retention experiment).
 """
 import json, sys
 cfg = json.load(open(sys.argv[1]))
@@ -18,6 +20,7 @@ body{background:var(--bg)}
 #hook h1{font-size:150px;margin:0}
 #hook p{font-size:68px;font-weight:700;margin:0;color:var(--acc)}
 #q{align-items:center;justify-content:center;padding:150px 80px 0;gap:40px}
+#q .series{font-size:34px;color:var(--onacc);background:var(--acc);border-radius:999px;padding:14px 30px}
 #q .qhook{font-size:76px;line-height:1.02;text-align:center;max-width:920px;color:var(--fg)}
 #q .count{font-size:38px;color:var(--acc)}
 #q .card{width:920px;padding:64px 60px;display:flex;align-items:center}
@@ -39,12 +42,15 @@ body{background:var(--bg)}
 #end .sub{font-size:56px;font-weight:600;margin:0 0 60px;color:var(--acc)}
 #end .book{font-size:40px;font-weight:500}
 #end .title{font-size:78px}
-#end .tag{font-size:44px;font-weight:700;margin-top:60px;color:var(--acc)}
+#end .tag{font-size:44px;font-weight:700;margin-top:40px;color:var(--acc)}
+#end .follow{font-size:54px;font-weight:700;margin-top:36px;color:var(--fg)}
+#end .tmr{font-size:44px;font-weight:500;color:var(--acc)}
 </style></head>
 <body><div class="frame">
 <div class="brand label">Lowe Books</div>
 <section id="hook" class="scene"><h1 class="display" id="h1"></h1><p class="display" id="h2"></p></section>
 <section id="q" class="scene">
+  <div class="series label" id="ser" style="display:none"></div>
   <div class="qhook display" id="qh"></div>
   <div class="count label" id="count"></div>
   <div class="card"><div class="display" id="qtext"></div></div>
@@ -55,11 +61,13 @@ body{background:var(--bg)}
   </div>
 </section>
 <section id="end" class="scene">
-  <h1 class="display">What's your score?</h1>
+  <h1 class="display" id="eh">What's your score?</h1>
   <p class="sub" id="esub"></p>
   <div class="book" id="endBook"></div>
   <div class="title display" id="endTitle"></div>
   <div class="book" id="endAuthor"></div>
+  <div class="follow display" id="ef" style="display:none"></div>
+  <div class="tmr" id="etm" style="display:none"></div>
   <div class="tag">Get curious. Scroll less.</div>
 </section>
 </div>
@@ -67,12 +75,16 @@ body{background:var(--bg)}
 <script>
 const CFG = __CFG__;
 const QS = CFG.qs, PER = CFG.per || 6.5, TIME = 5, HOOK = 0, END = HOOK + QS.length * PER;
-window.DURATION = END + 3.5;
+window.DURATION = END + (CFG.follow ? 4 : 3.5);
 window.EVENTS = [];
 QS.forEach((_, i) => { const s = HOOK + i * PER; EVENTS.push(['pop', s]); for (let k = 1; k < TIME; k++) EVENTS.push([k >= TIME - 2 ? 'tickhi' : 'tick', s + k]); EVENTS.push(['ding', s + TIME]); });
 EVENTS.push(['pop', END]);
 document.getElementById('qh').textContent = CFG.hook || '';
-document.getElementById('esub').textContent = 'Out of ' + QS.length + '. Tell us in the comments.';
+document.getElementById('esub').textContent = CFG.endSub || ('Out of ' + QS.length + '. Tell us in the comments.');
+if (CFG.endH) document.getElementById('eh').textContent = CFG.endH;
+if (CFG.series) { const e = document.getElementById('ser'); e.textContent = CFG.series; e.style.display = 'block'; }
+if (CFG.follow) { const e = document.getElementById('ef'); e.textContent = CFG.follow; e.style.display = 'block'; }
+if (CFG.tomorrow) { const e = document.getElementById('etm'); e.textContent = CFG.tomorrow; e.style.display = 'block'; }
 document.getElementById('endBook').textContent = CFG.endBook;
 document.getElementById('endTitle').textContent = CFG.endTitle;
 document.getElementById('endAuthor').textContent = CFG.endAuthor || 'by Rann Lowe';
@@ -82,7 +94,7 @@ function render(t) {
   if (t >= HOOK && t < END) {
     const i = Math.floor((t - HOOK) / PER), lt = t - HOOK - i * PER, d = QS[i];
     q.style.opacity = Math.min(1, (END - t) / 0.2);
-    document.getElementById('count').textContent = 'Question ' + (i + 1) + ' of ' + QS.length + ' · 5 seconds';
+    document.getElementById('count').textContent = (QS.length > 1 ? 'Question ' + (i + 1) + ' of ' + QS.length + ' · ' : '') + '5 seconds';
     const qt = document.getElementById('qtext'); qt.textContent = d.q;
     const p = i === 0 ? 1 : ease(lt / 0.25);
     qt.parentElement.style.transform = 'scale(' + (0.94 + 0.06 * p) + ')'; qt.style.opacity = p;

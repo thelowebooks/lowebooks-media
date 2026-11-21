@@ -1,14 +1,17 @@
 """Generate a maze video page or a maze pin page from a pool folder.
-usage: python make_maze.py video <maze_dir> <out.html> [hook] [bg]
+usage: python make_maze.py video <maze_dir> <out.html> [hook] [bg] [opts_json]
        python make_maze.py pin   <maze_dir> <out.html> [headline]
 maze_dir is relative to tools/work, e.g. ../maze/pool/circle-04 (built by tools/scripts/maze_pool.py).
 Video: opens on the maze with a 10 s countdown, reveals the solution, ends on the book card (about 16 s).
+opts_json (video): {series, secs (clock, default 10; 5 gives a ~10 s Reel), follow, tomorrow, endH, endSub}.
 Render videos at 1080x1920 and pins at 1000x1500 with tools/scripts/render.py.
 """
 import sys, html as H
 mode, d, out = sys.argv[1], sys.argv[2], sys.argv[3]
 hook = sys.argv[4] if len(sys.argv) > 4 else ('Beat this maze in 10 seconds.' if mode == 'video' else 'Can you solve this maze?')
 bg = sys.argv[5] if len(sys.argv) > 5 else '#1E1A16'
+import json
+OPTS = json.loads(sys.argv[6]) if len(sys.argv) > 6 else {}
 VIDEO = r'''<!doctype html>
 <html><head><meta charset="utf-8"><link rel="stylesheet" href="base.css">
 <style>
@@ -16,6 +19,7 @@ body{background:__BG__}
 .frame{width:1080px;height:1920px;background:__BG__;color:var(--cream)}
 .brand{color:var(--yellow)}
 #play{align-items:center;padding-top:240px;gap:36px}
+.series{font-size:34px;color:var(--ink);background:var(--yellow);border-radius:999px;padding:14px 30px;display:none}
 .mh{font-size:84px;line-height:1.02;text-align:center;width:920px}
 .head{height:200px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:22px;width:920px}
 .secs{font-size:150px;color:var(--yellow);line-height:1}
@@ -30,28 +34,39 @@ body{background:__BG__}
 #end .sub{font-size:60px;font-weight:600;margin:0 0 70px;color:var(--yellow)}
 #end .book{font-size:40px;font-weight:500}
 #end .title{font-size:76px}
-#end .tag{font-size:44px;font-weight:700;margin-top:60px;color:var(--yellow)}
+#end .tag{font-size:44px;font-weight:700;margin-top:40px;color:var(--yellow)}
+#end .follow{font-size:54px;font-weight:700;margin-top:30px;color:var(--cream);display:none}
+#end .tmr{font-size:44px;font-weight:500;color:var(--yellow);display:none}
 </style></head>
 <body><div class="frame">
 <div class="brand label">Lowe Books</div>
 <section id="play" class="scene">
+  <div class="series label" id="ser"></div>
   <div class="mh display">__HOOK__</div>
   <div class="head"><div class="secs display" id="secs">10</div><div class="bar"><div id="bar"></div></div><div class="up display" id="up">Time's up.</div></div>
   <div class="mazecard"><img src="__DIR__/maze_ink.png"><img id="path" src="__DIR__/path_000.png" style="opacity:0"></div>
   <div class="tip" id="tip">Green dot to red dot. Go!</div>
 </section>
 <section id="end" class="scene">
-  <h1 class="display">Did you make it?</h1>
-  <p class="sub">Tell us in the comments. 100 more mazes, solutions included.</p>
+  <h1 class="display" id="eh">Did you make it?</h1>
+  <p class="sub" id="es">Tell us in the comments. 100 more mazes, solutions included.</p>
   <div class="title display">Easy Maze Puzzle Book for Seniors</div>
   <div class="book">by Rann Lowe · on Amazon</div>
+  <div class="follow display" id="ef"></div>
+  <div class="tmr" id="etm"></div>
   <div class="tag">Get curious. Scroll less.</div>
 </section>
 </div>
 <script src="anim.js"></script>
 <script>
-const DIR = '__DIR__', SECS = 10, UP = SECS, DRAW = 2.0, END = UP + 3.2;
-window.DURATION = END + 3.2;
+const O = __OPTS__;
+const DIR = '__DIR__', SECS = O.secs || 10, UP = SECS, DRAW = SECS < 10 ? 1.5 : 2.0, END = UP + (SECS < 10 ? 2.4 : 3.2);
+window.DURATION = END + (O.follow ? 3.8 : 3.2);
+if (O.series) { const e = document.getElementById('ser'); e.textContent = O.series; e.style.display = 'block'; }
+if (O.follow) { const e = document.getElementById('ef'); e.textContent = O.follow; e.style.display = 'block'; }
+if (O.tomorrow) { const e = document.getElementById('etm'); e.textContent = O.tomorrow; e.style.display = 'block'; }
+if (O.endH) document.getElementById('eh').textContent = O.endH;
+if (O.endSub) document.getElementById('es').textContent = O.endSub;
 window.EVENTS = [];
 for (let s = 1; s < SECS; s++) EVENTS.push([s >= SECS - 3 ? 'tickhi' : 'tick', s]);
 EVENTS.push(['ding', UP]); EVENTS.push(['ding', END]);
@@ -93,5 +108,5 @@ h1{margin:30px 0 0;font-size:92px}
 <div class="foot"><div class="from">Green dot to red dot. Solution in</div><div class="title display">Easy Maze Puzzle Book for Seniors</div><div class="from">by Rann Lowe · 100 large-print mazes</div><div class="tag">Get curious. Scroll less.</div></div>
 </div><script src="anim.js"></script><script>function render(t){}</script></body></html>'''
 T = VIDEO if mode == 'video' else PIN
-open(out, 'w', encoding='utf-8').write(T.replace('__DIR__', d).replace('__HOOK__', H.escape(hook)).replace('__BG__', bg))
+open(out, 'w', encoding='utf-8').write(T.replace('__OPTS__', json.dumps(OPTS)).replace('__DIR__', d).replace('__HOOK__', H.escape(hook)).replace('__BG__', bg))
 print('wrote', out)
