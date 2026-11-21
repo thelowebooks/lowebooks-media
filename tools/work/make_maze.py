@@ -35,8 +35,12 @@ body{background:__BG__}
 #end .book{font-size:40px;font-weight:500}
 #end .title{font-size:76px}
 #end .tag{font-size:44px;font-weight:700;margin-top:40px;color:var(--yellow)}
-#end .follow{font-size:54px;font-weight:700;margin-top:30px;color:var(--cream);display:none}
-#end .tmr{font-size:44px;font-weight:500;color:var(--yellow);display:none}
+#end h1{font-size:112px}
+#end .sub{font-size:44px;margin:0 0 20px}
+#end .follow{font-size:92px;line-height:1.02;font-weight:800;margin:10px 0 0;color:var(--ink);background:var(--yellow);border-radius:44px;padding:44px 48px;text-align:center;display:none}
+#end .tmr{font-size:62px;font-weight:700;color:var(--cream);text-align:center;margin:18px 0 26px;display:none}
+#end .bk{display:flex;flex-direction:column;gap:6px;margin-top:10px}
+#end .bk .book{font-size:32px;opacity:.85}#end .bk .title{font-size:44px}
 </style></head>
 <body><div class="frame">
 <div class="brand label">Lowe Books</div>
@@ -50,10 +54,10 @@ body{background:__BG__}
 <section id="end" class="scene">
   <h1 class="display" id="eh">Did you make it?</h1>
   <p class="sub" id="es">Tell us in the comments. 100 more mazes, solutions included.</p>
-  <div class="title display">Easy Maze Puzzle Book for Seniors</div>
-  <div class="book">by Rann Lowe · on Amazon</div>
   <div class="follow display" id="ef"></div>
-  <div class="tmr" id="etm"></div>
+  <div class="tmr display" id="etm"></div>
+  <div class="bk" id="bk"><div class="title display">Easy Maze Puzzle Book for Seniors</div>
+  <div class="book">by Rann Lowe · on Amazon</div></div>
   <div class="tag">Get curious. Scroll less.</div>
 </section>
 </div>
@@ -65,6 +69,7 @@ window.DURATION = END + (O.follow ? 3.8 : 3.2);
 if (O.series) { const e = document.getElementById('ser'); e.textContent = O.series; e.style.display = 'block'; }
 if (O.follow) { const e = document.getElementById('ef'); e.textContent = O.follow; e.style.display = 'block'; }
 if (O.tomorrow) { const e = document.getElementById('etm'); e.textContent = O.tomorrow; e.style.display = 'block'; }
+if (O.nobook) document.getElementById('bk').style.display = 'none';
 if (O.endH) document.getElementById('eh').textContent = O.endH;
 if (O.endSub) document.getElementById('es').textContent = O.endSub;
 window.EVENTS = [];

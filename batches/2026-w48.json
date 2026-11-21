@@ -13,7 +13,8 @@
    "TEST (labeled): the IG 'save and follow' carousel (Wed, Parents, last slide is a follow card; the Facebook copy keeps the book card), and a Random trivia pin with the answer revealed on the image.",
    "DO LESS: no Couples or About Me video this week (their timer videos got 62-137 views and 2.4-5.0 s on Instagram); they stay on pins and one Couples carousel on Sat.",
    "NO CHANGE for Pinterest volume (20 pins): impressions are 0-8 per pin, too small to steer by. Keep the seasonal mix: Thanksgiving, Black Friday and Christmas gift pins (Parents, Memory Lane, Mazes, Couples), 5 trivia pins. No posting-slot test this week because there is no signal to compare.",
-   "If Buffer still shows 0 follows after week 50, the plan is to stop spending effort on Instagram growth and focus on Pinterest and Facebook."
+   "If Buffer still shows 0 follows after week 50, the plan is to stop spending effort on Instagram growth and focus on Pinterest and Facebook.",
+   "Reel end cards redesigned for follower growth: \"Follow @thelowebooks\" is now a big filled button and the tomorrow teaser is large; the book name is small. Test: 3 of the 7 videos (Mon, Thu, Fri) drop the book name entirely, 4 keep it small."
   ],
   "instagram": {
    "summary": "Nov 14-20 (7 days): 9 posts, 2,822 views, reach 2,340, avg watch 5.8 s, 30 reactions, 0 comments, 1 save, 1 share, 0 FOLLOWS (prior 7 days: 8 posts, 1,788 views, 3.8 s, 0 follows). The 4 maze Reels held about 8.2 s each (51% of 16 s); the other 7 Reels held 2.6-5.5 s. Follows per post and per series: 0 everywhere (the series tags only start this week, so there is no per-series data yet). Carousels: Buffer returns 0 views for IG carousels, so no usable carousel data. Total views since Nov 7 are well above week one, but almost all come from mazes.",
@@ -128,7 +129,7 @@
    "thumbnailOffset": 1000,
    "series": "Memory Lane Quiz",
    "experiment": true,
-   "experiment_note": "1-question Reel (about 10 s) to test retention: one question, 5 s timer, answer reveal. Compare average watch time with the 14-17 s videos.",
+   "experiment_note": "1-question Reel (about 10 s) to test retention: one question, 5 s timer, answer reveal. Compare average watch time with the 14-17 s videos. Also: end card test: book name removed, the follow card and tomorrow teaser carry the whole card. Compare follows and profile visits against the 4 videos that keep a small book line.",
    "n": 3
   },
   {
@@ -153,7 +154,7 @@
    "thumbnailOffset": 1000,
    "firstComment": "Get the book on Amazon: https://www.amazon.com/Memory-Lane-Trivia-Book-Seniors/dp/B0CFCPF76B?maas=maas_adg_930DCE94CFFE325A08DAB2CB7C8B4DD9_afap_abs&ref_=aa_maas&tag=maas",
    "experiment": true,
-   "experiment_note": "1-question Reel (about 10 s) to test retention: one question, 5 s timer, answer reveal. Compare average watch time with the 14-17 s videos.",
+   "experiment_note": "1-question Reel (about 10 s) to test retention: one question, 5 s timer, answer reveal. Compare average watch time with the 14-17 s videos. Also: end card test: book name removed, the follow card and tomorrow teaser carry the whole card. Compare follows and profile visits against the 4 videos that keep a small book line.",
    "n": 4
   },
   {
@@ -180,7 +181,7 @@
    "destination_url": "https://www.amazon.com/Memory-Lane-Trivia-Book-Seniors/dp/B0CFCPF76B?maas=maas_adg_BFE1FD5B2FB6F520D0D3A107B688A095_afap_abs&ref_=aa_maas&tag=maas",
    "thumbnailOffset": 1000,
    "experiment": true,
-   "experiment_note": "1-question Reel (about 10 s) to test retention: one question, 5 s timer, answer reveal. Compare average watch time with the 14-17 s videos.",
+   "experiment_note": "1-question Reel (about 10 s) to test retention: one question, 5 s timer, answer reveal. Compare average watch time with the 14-17 s videos. Also: end card test: book name removed, the follow card and tomorrow teaser carry the whole card. Compare follows and profile visits against the 4 videos that keep a small book line.",
    "n": 5
   },
   {
@@ -528,7 +529,7 @@
    "series": "Maze of the Day",
    "maze": "circle-04",
    "experiment": true,
-   "experiment_note": "5-second maze (about 11 s Reel) to test retention against the 10-second, 17 s mazes that hold about 8 s.",
+   "experiment_note": "5-second maze (about 11 s Reel) to test retention against the 10-second, 17 s mazes that hold about 8 s. Also: end card test: book name removed, the follow card and tomorrow teaser carry the whole card. Compare follows and profile visits against the 4 videos that keep a small book line.",
    "n": 19
   },
   {
@@ -554,7 +555,7 @@
    "firstComment": "Get the book on Amazon: https://www.amazon.com/Easy-Maze-Puzzle-Book-Seniors/dp/B0CP3FKPDW/?maas=maas_adg_A778CD5262C604AC7AC8456EFEA6C777_afap_abs&ref_=aa_maas&tag=maas",
    "maze": "circle-04",
    "experiment": true,
-   "experiment_note": "5-second maze (about 11 s Reel) to test retention against the 10-second, 17 s mazes that hold about 8 s.",
+   "experiment_note": "5-second maze (about 11 s Reel) to test retention against the 10-second, 17 s mazes that hold about 8 s. Also: end card test: book name removed, the follow card and tomorrow teaser carry the whole card. Compare follows and profile visits against the 4 videos that keep a small book line.",
    "n": 20
   },
   {
@@ -582,7 +583,7 @@
    "thumbnailOffset": 1000,
    "maze": "circle-04",
    "experiment": true,
-   "experiment_note": "5-second maze (about 11 s Reel) to test retention against the 10-second, 17 s mazes that hold about 8 s.",
+   "experiment_note": "5-second maze (about 11 s Reel) to test retention against the 10-second, 17 s mazes that hold about 8 s. Also: end card test: book name removed, the follow card and tomorrow teaser carry the whole card. Compare follows and profile visits against the 4 videos that keep a small book line.",
    "n": 21
   },
   {
@@ -654,7 +655,9 @@
    "link_note": "Link in bio",
    "thumbnailOffset": 1000,
    "series": "Quick Trivia",
-   "n": 24
+   "n": 24,
+   "experiment": true,
+   "experiment_note": "End card test: book name removed, the follow card and tomorrow teaser carry the whole card. Compare follows and profile visits against the 4 videos that keep a small book line."
   },
   {
    "channel": "Facebook",
@@ -677,7 +680,9 @@
    "link_note": "Link in the first comment",
    "thumbnailOffset": 1000,
    "firstComment": "Get the book on Amazon: https://www.amazon.com/Random-Knowledge-Trivia-Book-Chronicles/dp/B0DTKGCK6N?maas=maas_adg_E184D21D81AA4ED4DB9FAC0D340AD7EE_afap_abs&ref_=aa_maas&tag=maas",
-   "n": 25
+   "n": 25,
+   "experiment": true,
+   "experiment_note": "End card test: book name removed, the follow card and tomorrow teaser carry the whole card. Compare follows and profile visits against the 4 videos that keep a small book line."
   },
   {
    "channel": "Pinterest",
@@ -702,7 +707,9 @@
    "link_note": "Amazon Attribution link",
    "destination_url": "https://www.amazon.com/Random-Knowledge-Trivia-Book-Chronicles/dp/B0DTKGCK6N?maas=maas_adg_09CF6EBD5779CC7E3CE00C29501FF972_afap_abs&ref_=aa_maas&tag=maas",
    "thumbnailOffset": 1000,
-   "n": 26
+   "n": 26,
+   "experiment": true,
+   "experiment_note": "End card test: book name removed, the follow card and tomorrow teaser carry the whole card. Compare follows and profile visits against the 4 videos that keep a small book line."
   },
   {
    "channel": "Pinterest",

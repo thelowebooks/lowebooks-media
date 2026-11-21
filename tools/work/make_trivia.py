@@ -43,8 +43,12 @@ body{background:var(--bg)}
 #end .book{font-size:40px;font-weight:500}
 #end .title{font-size:78px}
 #end .tag{font-size:44px;font-weight:700;margin-top:40px;color:var(--acc)}
-#end .follow{font-size:54px;font-weight:700;margin-top:36px;color:var(--fg)}
-#end .tmr{font-size:44px;font-weight:500;color:var(--acc)}
+#end h1{font-size:112px}
+#end .sub{font-size:44px;margin:0 0 20px}
+#end .follow{font-size:92px;line-height:1.02;font-weight:800;margin:10px 0 0;color:var(--onacc);background:var(--acc);border-radius:44px;padding:44px 48px;text-align:center}
+#end .tmr{font-size:62px;font-weight:700;color:var(--fg);text-align:center;margin:18px 0 26px}
+#end .bk{display:flex;flex-direction:column;gap:6px;margin-top:10px}
+#end .bk .book{font-size:32px;opacity:.85}#end .bk .title{font-size:44px}
 </style></head>
 <body><div class="frame">
 <div class="brand label">Lowe Books</div>
@@ -63,11 +67,11 @@ body{background:var(--bg)}
 <section id="end" class="scene">
   <h1 class="display" id="eh">What's your score?</h1>
   <p class="sub" id="esub"></p>
-  <div class="book" id="endBook"></div>
-  <div class="title display" id="endTitle"></div>
-  <div class="book" id="endAuthor"></div>
   <div class="follow display" id="ef" style="display:none"></div>
-  <div class="tmr" id="etm" style="display:none"></div>
+  <div class="tmr display" id="etm" style="display:none"></div>
+  <div class="bk" id="bk"><div class="book" id="endBook"></div>
+  <div class="title display" id="endTitle"></div>
+  <div class="book" id="endAuthor"></div></div>
   <div class="tag">Get curious. Scroll less.</div>
 </section>
 </div>
@@ -85,6 +89,7 @@ if (CFG.endH) document.getElementById('eh').textContent = CFG.endH;
 if (CFG.series) { const e = document.getElementById('ser'); e.textContent = CFG.series; e.style.display = 'block'; }
 if (CFG.follow) { const e = document.getElementById('ef'); e.textContent = CFG.follow; e.style.display = 'block'; }
 if (CFG.tomorrow) { const e = document.getElementById('etm'); e.textContent = CFG.tomorrow; e.style.display = 'block'; }
+if (CFG.nobook) document.getElementById('bk').style.display = 'none';
 document.getElementById('endBook').textContent = CFG.endBook;
 document.getElementById('endTitle').textContent = CFG.endTitle;
 document.getElementById('endAuthor').textContent = CFG.endAuthor || 'by Rann Lowe';
